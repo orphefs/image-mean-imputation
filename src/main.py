@@ -40,25 +40,21 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
                 (i, j - 1),
             ]
             if calibration_value == -1:
-                threshold = np.sum([calibration_image[indices] for indices in neighbouring_indices])
-                if threshold == -8:
-                    break  # move on to next cell
-                else:
-                    total = 0
-                    total_index = 0
-                    mean = 0
-                    for indices in neighbouring_indices:
-                        neighbouring_calib_value = calibration_image[indices]
-                        # check which pixels are 0 around the query pixel in the calibration image
-                        if neighbouring_calib_value == 0:
-                            total += image[indices]
-                            total_index += 1
-                            # and use those to compute the average in the actual image
-                    mean = total / total_index
-                    # impute the pixel in the actual image
-                    image[i, j] = mean
-                    # update the calibration image from -1 to 0 for that index
-                    calibration_image[i, j] = 0
+                total = 0
+                total_index = 0
+                mean = 0
+                for indices in neighbouring_indices:
+                    neighbouring_calib_value = calibration_image[indices]
+                    # check which pixels are 0 around the query pixel in the calibration image
+                    if neighbouring_calib_value == 0:
+                        total += image[indices]
+                        total_index += 1
+                        # and use those to compute the average in the actual image
+                mean = total / total_index
+                # impute the pixel in the actual image
+                image[i, j] = mean
+                # update the calibration image from -1 to 0 for that index
+                calibration_image[i, j] = 0
 
     return image
 
