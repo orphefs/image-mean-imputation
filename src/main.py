@@ -7,6 +7,7 @@ import numpy as np
 import numpy.typing as npt
 from definitions import DATA_DIR
 from PIL import Image
+
 import matplotlib.pyplot as plt
 
 
@@ -115,34 +116,51 @@ def plot_image_statistics(image: np.typing.NDArray[np.uint16],
     return fig, ax
 
 
+def draw_values(ax: plt.Axes, image: npt.NDArray[Any], ):
+    for (j, i), label in np.ndenumerate(image):
+        ax.text(i, j, label, ha='center', va='center')
+
+
 def plot_processing_results(image: np.typing.NDArray[np.uint16],
                             calibration_image: np.typing.NDArray[np.float64],
-                            corrected_image: np.typing.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
+                            imputed_image: np.typing.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
     fig, ax = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)
+    # TODO: plot values of pixels on image
+    ax[0].imshow(normalize_image(image, 65535))
+    ax[0].set_title("Original image")
+    calibration_image[np.where(calibration_image < 0.0)] = 0.0
+    calibration_image[np.where(calibration_image > 0.0)] = 1.0
+    # draw_values(ax[0], normalize_image(image, 65535))
 
-    ax[0].imshow(image)
     ax[1].imshow(calibration_image)
-    ax[2].imshow(corrected_image)
+    ax[1].set_title("Calibration image")
+    # draw_values(ax[1], calibration_image)
+
+    ax[2].imshow(normalize_image(imputed_image, 65535))
+    ax[2].set_title("Imputed image")
+    # draw_values(ax[2], normalize_image(imputed_image, 65535))
+    #
+    # cv2.imshow('image', imputed_image)
+    # cv2.waitKey(0)
+
     return fig, ax
 
 
 def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, Path]) -> npt.NDArray[
     np.uint16]:
-    image = load_image(path_to_image)
-    calibration_image = load_image(path_to_calibration_image)
-
-    image = impute_image(image, calibration_image)
+    imputed_image = impute_image(image=load_image(path_to_image),
+        calibration_image=load_image(path_to_calibration_image))
 
     fig, ax = plot_image_statistics(image=load_image(path_to_image),
         calibration_image=load_image(path_to_calibration_image), )
 
-    # fig, ax = plot_processing_results(image=np.clip(load_image(path_to_image), 0, 3000),
-    #     calibration_image=load_image(path_to_calibration_image),
-    #     corrected_image=image)
+    fig, ax = plot_processing_results(image=load_image(path_to_image),
+        calibration_image=load_image(path_to_calibration_image),
+        imputed_image=imputed_image)
 
     plt.show()
 
-    return image
+    return imputed_image
 
 
 if __name__ == '__main__':
