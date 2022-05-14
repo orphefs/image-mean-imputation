@@ -57,6 +57,8 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
                     mean = total / total_index
                     # impute the pixel in the actual image
                     image[i, j] = mean
+                    # update the calibration image from -1 to 0 for that index
+                    calibration_image[i, j] = 0
 
     return image
 
@@ -68,17 +70,17 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
 
     calibration_image = np.array([
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, -1, -1, 0, 0, 0, 0, 0],
-        [0, 0, -1, -1, 0, 0, 0, 0, 0],
+        [0, 0, -1, -1, -1, 0, 0, 0, 0],
+        [0, 0, -1, -1, -1, 0, 0, 0, 0],
+        [0, 0, -1, -1, -1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
     ])
 
     image = np.array([[1., 1., 1., 1., 1., 1., 1., 1., 1.],
-                      [1., 1., 1., 1., 1., 1., 1., 1., 1.],
-                      [1., 1., 3., 2., 1., 1., 1., 1., 1.],
-                      [1., 1., 6., 15., 1., 1., 1., 1., 1.],
+                      [1., 1., 2., 13., 4., 1., 1., 1., 1.],
+                      [1., 1., 3., 2., 5., 1., 1., 1., 1.],
+                      [1., 1., 6., 15., 9., 1., 1., 1., 1.],
                       [1., 1., 1., 1., 1., 1., 1., 1., 1.],
                       [1., 1., 1., 1., 1., 1., 1., 1., 1.]])
 
