@@ -42,7 +42,7 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
                 (i, j + 1),
                 (i, j - 1),
             ]
-            if calibration_value == -1:
+            if calibration_value < 0 :
                 total = 0
                 total_index = 0
                 mean = 0
