@@ -21,7 +21,7 @@ def pad_image(image: npt.NDArray[Any]) -> npt.NDArray[Any]:
     return np.pad(image, 1, mode="constant", constant_values=(0))
 
 
-def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typing.NDArray[np.float64]):
+def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typing.NDArray[np.float32]):
     # divide and conquer strategy - check pixels between 1:end-1
     for (i, j), calibration_value in np.ndenumerate(calibration_image):
 
@@ -87,7 +87,7 @@ def normalize_image(image: npt.NDArray[Any], max_val: int) -> npt.NDArray[Any]:
 
 
 def plot_image_statistics(image: np.typing.NDArray[np.uint16],
-                          calibration_image: np.typing.NDArray[np.float64]) -> Tuple[plt.figure, plt.axes]:
+                          calibration_image: np.typing.NDArray[np.float32]) -> Tuple[plt.figure, plt.axes]:
     fig, ax = plt.subplots(nrows=3, ncols=2)
 
     # Image plots
@@ -122,7 +122,7 @@ def draw_values(ax: plt.Axes, image: npt.NDArray[Any], ):
 
 
 def plot_processing_results(image: np.typing.NDArray[np.uint16],
-                            calibration_image: np.typing.NDArray[np.float64],
+                            calibration_image: np.typing.NDArray[np.float32],
                             imputed_image: np.typing.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
     fig, ax = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)
     # TODO: plot values of pixels on image
