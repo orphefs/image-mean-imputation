@@ -1,6 +1,8 @@
 from pathlib import Path
-from typing import Union, Any
+from typing import Union, Any, Tuple
+from scipy import stats
 import cv2
+import pandas as pd
 import numpy as np
 import numpy.typing as npt
 from definitions import DATA_DIR
@@ -59,28 +61,86 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
     return image
 
 
+def filter_outliers(df: pd.DataFrame) -> pd.DataFrame:
+    # Compute IQR
+    filtered = df.copy()
+    Q1 = filtered["values"].quantile(0.25)
+    Q3 = filtered["values"].quantile(0.75)
+    IQR = Q3 - Q1
+    # Filtering Values between Q1-1.5IQR and Q3+1.5IQR
+    filtered = filtered.query('(@Q1 - 1.5 * @IQR) <= {} <= (@Q3 + 1.5 * @IQR)'.format("values"))
+    return filtered
+
+
+def equalize_histogram(image: npt.NDArray[Any]) -> np.ndarray:
+    equ = cv2.equalizeHist(image)
+    res = np.hstack((image, equ))  # stacking images side-by-side
+
+    return res
+
+
+def normalize_image(image: npt.NDArray[Any], max_val: int) -> npt.NDArray[Any]:
+    res = image.copy()
+    cv2.normalize(image, res, 0, max_val, cv2.NORM_MINMAX)
+    return res
+
+
+def plot_image_statistics(image: np.typing.NDArray[np.uint16],
+                          calibration_image: np.typing.NDArray[np.float64]) -> Tuple[plt.figure, plt.axes]:
+    fig, ax = plt.subplots(nrows=3, ncols=2)
+
+    # Image plots
+    # image
+    ax[0, 0].imshow(np.hstack([image, normalize_image(image, 65535)]))
+    ax[0, 0].set_title("Image and normalized version")
+
+    # calibration image
+    ax[0, 1].imshow(calibration_image)
+    ax[0, 1].set_title("Calibration image")
+
+    # Scatter and histogram plots
+
+    # image
+    prob = stats.probplot(image.flatten(), dist=stats.norm, plot=ax[1, 0])
+    ax[1, 0].set_title('Probability plot against normal distribution')
+    pd.DataFrame({"values": normalize_image(image, 65535).flatten()}).plot.hist(bins=100, ax=ax[2, 0])
+    ax[2, 0].set_title("Histogram after image normalization")
+
+    # calibration image
+    ax[1, 1].scatter(x=np.arange(len(calibration_image.flatten())), y=calibration_image.flatten())
+    ax[1, 1].set_title("Scatter plot")
+
+    filter_outliers(pd.DataFrame({"values": calibration_image.flatten()})).plot.hist(bins=100, ax=ax[2, 1])
+
+    return fig, ax
+
+
+def plot_processing_results(image: np.typing.NDArray[np.uint16],
+                            calibration_image: np.typing.NDArray[np.float64],
+                            corrected_image: np.typing.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
+    fig, ax = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)
+
+    ax[0].imshow(image)
+    ax[1].imshow(calibration_image)
+    ax[2].imshow(corrected_image)
+    return fig, ax
+
+
 def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, Path]) -> npt.NDArray[
     np.uint16]:
     image = load_image(path_to_image)
     calibration_image = load_image(path_to_calibration_image)
 
-    calibration_image = np.array([
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, -1, -1, -1, 0, 0, 0, 0],
-        [0, 0, -1, -1, -1, 0, 0, 0, 0],
-        [0, 0, -1, -1, -1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ])
-
-    image = np.array([[1., 1., 1., 1., 1., 1., 1., 1., 1.],
-                      [1., 1., 2., 13., 4., 1., 1., 1., 1.],
-                      [1., 1., 3., 2., 5., 1., 1., 1., 1.],
-                      [1., 1., 6., 15., 9., 1., 1., 1., 1.],
-                      [1., 1., 1., 1., 1., 1., 1., 1., 1.],
-                      [1., 1., 1., 1., 1., 1., 1., 1., 1.]])
-
     image = impute_image(image, calibration_image)
+
+    fig, ax = plot_image_statistics(image=load_image(path_to_image),
+        calibration_image=load_image(path_to_calibration_image), )
+
+    # fig, ax = plot_processing_results(image=np.clip(load_image(path_to_image), 0, 3000),
+    #     calibration_image=load_image(path_to_calibration_image),
+    #     corrected_image=image)
+
+    plt.show()
 
     return image
 
