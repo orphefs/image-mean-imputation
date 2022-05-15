@@ -5,7 +5,7 @@ import cv2
 import pandas as pd
 import numpy as np
 import numpy.typing as npt
-from definitions import DATA_DIR
+from definitions import DATA_DIR, image_dtype, calibration_image_dtype
 from PIL import Image
 from pyoniip import impute_image as impute_image_cpp
 
@@ -54,9 +54,9 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
                         total += image[indices]
                         total_index += 1
                         # and use those to compute the average in the actual image
-                mean = total / total_index
+                mean = total // total_index
                 # impute the pixel in the actual image
-                image[i, j] = mean
+                image[i, j] = np.uint16(mean)
                 # update the calibration image from negative to 0 for that index
                 calibration_image[i, j] = 0
 
@@ -103,10 +103,17 @@ def plot_image_statistics(image: np.typing.NDArray[np.uint16],
     # Scatter and histogram plots
 
     # image
-    prob = stats.probplot(image.flatten(), dist=stats.norm, plot=ax[1, 0])
-    ax[1, 0].set_title('Probability plot against normal distribution')
-    pd.DataFrame({"values": normalize_image(image, 65535).flatten()}).plot.hist(bins=100, ax=ax[2, 0])
+
+    # prob = stats.probplot(image.flatten(), dist=stats.norm, plot=ax[1, 0])
+    # ax[1, 0].set_title('Probability plot against normal distribution')
+    # pd.DataFrame({"values": normalize_image(image, 65535).flatten()}).plot.hist(bins=100, ax=ax[2, 0])
+    ax[1, 0].set_title("Histogram before image normalization")
+    pd.DataFrame({"values": image.flatten()}).plot.hist(bins=100, ax=ax[1, 0])
+
     ax[2, 0].set_title("Histogram after image normalization")
+    pd.DataFrame({"values": normalize_image(image, 65535).flatten()}).plot.hist(bins=100, ax=ax[2, 0])
+
+
 
     # calibration image
     ax[1, 1].scatter(x=np.arange(len(calibration_image.flatten())), y=calibration_image.flatten())
@@ -127,6 +134,7 @@ def plot_processing_results(image: np.typing.NDArray[np.uint16],
                             imputed_image: np.typing.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
     fig, ax = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)
     # TODO: plot values of pixels on image
+    # normalize_image(image, 65535)
     ax[0].imshow(normalize_image(image, 65535))
     ax[0].set_title("Original image")
     calibration_image[np.where(calibration_image < 0.0)] = 0.0
@@ -152,7 +160,6 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
     imputed_image = impute_image(image=load_image(path_to_image),
         calibration_image=load_image(path_to_calibration_image))
 
-    imputed_image = impute_image_cpp(load_image(path_to_image), load_image(path_to_calibration_image))
 
     fig, ax = plot_image_statistics(image=load_image(path_to_image),
         calibration_image=load_image(path_to_calibration_image), )
