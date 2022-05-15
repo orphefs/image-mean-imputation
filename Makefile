@@ -4,8 +4,6 @@ SHELL := /bin/bash
 
 VENV := venv
 
-.PHONY: data
-
 virtualenv: ## Create virtualenv
 	@if [ -d $(VENV) ]; then rm -rf $(VENV); fi
 	python3 -m venv $(VENV)
@@ -21,9 +19,6 @@ update-requirements-txt: ## Update requirements.txt
 	$(VENV)/bin/pip install -r unpinned_requirements.txt
 	echo "# DO NOT EDIT! Automatically created by make update-requirements-txt" > requirements.txt
 	$(VENV)/bin/pip freeze | grep -v pkg_resources >> requirements.txt
-
-data: ## Downloads data from Azure (versioned by DVC)
-	dvc pull
 
 help: ## Show help message
 	@IFS=$$'\n' ; \
