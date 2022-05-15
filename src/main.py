@@ -7,6 +7,7 @@ import numpy as np
 import numpy.typing as npt
 from definitions import DATA_DIR
 from PIL import Image
+from pyoniip import impute_image as impute_image_cpp
 
 import matplotlib.pyplot as plt
 
@@ -150,6 +151,8 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
     np.uint16]:
     imputed_image = impute_image(image=load_image(path_to_image),
         calibration_image=load_image(path_to_calibration_image))
+
+    imputed_image = impute_image_cpp(load_image(path_to_image), load_image(path_to_calibration_image))
 
     fig, ax = plot_image_statistics(image=load_image(path_to_image),
         calibration_image=load_image(path_to_calibration_image), )
