@@ -27,7 +27,7 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
 
         # skip boundary in this loop
 
-        if i == 0 or j == 0 or i > calibration_image.shape[0] - 1 or j > calibration_image.shape[1] - 1:
+        if i == 0 or j == 0 or i == calibration_image.shape[0] - 1 or j == calibration_image.shape[1] - 1:
             pass
         else:
 
@@ -42,21 +42,21 @@ def impute_image(image: np.typing.NDArray[np.uint16], calibration_image: np.typi
                 (i, j + 1),
                 (i, j - 1),
             ]
-            if calibration_value < 0 :
+            if calibration_value < 0:
                 total = 0
                 total_index = 0
                 mean = 0
                 for indices in neighbouring_indices:
                     neighbouring_calib_value = calibration_image[indices]
                     # check which pixels are 0 around the query pixel in the calibration image
-                    if neighbouring_calib_value == 0:
+                    if neighbouring_calib_value >= 0:
                         total += image[indices]
                         total_index += 1
                         # and use those to compute the average in the actual image
                 mean = total / total_index
                 # impute the pixel in the actual image
                 image[i, j] = mean
-                # update the calibration image from -1 to 0 for that index
+                # update the calibration image from negative to 0 for that index
                 calibration_image[i, j] = 0
 
     return image
