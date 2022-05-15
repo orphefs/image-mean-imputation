@@ -2,3 +2,4 @@ opencv-python
 pillow
 matplotlib
 pytest-lazy-fixture
+git+https://github.com/orphefs/pyoniip
