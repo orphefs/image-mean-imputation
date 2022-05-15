@@ -6,12 +6,12 @@ iniconfig==1.1.1
 kiwisolver==1.4.2
 matplotlib==3.5.2
 numpy==1.22.3
-oniip @ git+https://github.com/orphefs/pyoniip@180ee63813b53a66c8f2d7c59be9dd24639d9b54
 opencv-python==4.5.5.64
 packaging==21.3
 Pillow==9.1.0
 pluggy==1.0.0
 py==1.11.0
+pyoniip @ git+https://github.com/orphefs/pyoniip@fc39f283f4fbfdfab059f8cdc6474a6ea18624a0
 pyparsing==3.0.9
 pytest==7.1.2
 pytest-lazy-fixture==0.6.3
