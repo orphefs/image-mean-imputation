@@ -84,9 +84,10 @@ def draw_values(ax: plt.Axes, image: npt.NDArray[Any], ):
 
 def plot_processing_results(image: npt.NDArray[np.uint16],
                             calibration_image: npt.NDArray[np.float32],
-                            imputed_image: npt.NDArray[np.uint16],
+                            imputed_image_python: npt.NDArray[np.uint16],
+                            imputed_image_cpp: npt.NDArray[np.uint16],
                             imputed_image_opencv: npt.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
-    fig, ax = plt.subplots(nrows=1, ncols=4, sharex=True, sharey=True)
+    fig, ax = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True)
     # TODO: plot values of pixels on image
     # normalize_image(image, 65535)
     ax[0].imshow(normalize_image(image, 65535))
@@ -99,11 +100,14 @@ def plot_processing_results(image: npt.NDArray[np.uint16],
     ax[1].set_title("Calibration image")
     # draw_values(ax[1], calibration_image)
 
-    ax[2].imshow(normalize_image(imputed_image, 65535))
-    ax[2].set_title("Imputed image (pyoniip)")
+    ax[2].imshow(normalize_image(imputed_image_python.astype("float"), 65535))
+    ax[2].set_title("Imputed image (python)")
 
-    ax[3].imshow(normalize_image(imputed_image_opencv, 65535))
-    ax[3].set_title("Imputed image (cv2.inpaint)")
+    ax[3].imshow(normalize_image(imputed_image_cpp.astype("float"), 65535))
+    ax[3].set_title("Imputed image (pyoniip)")
+
+    ax[4].imshow(normalize_image(imputed_image_opencv.astype("float"), 65535))
+    ax[4].set_title("Imputed image (cv2.inpaint)")
     # draw_values(ax[2], normalize_image(imputed_image, 65535))
     #
     # cv2.imshow('image', imputed_image)

@@ -8,16 +8,26 @@ from definitions import DATA_DIR
 import matplotlib.pyplot as plt
 
 from src import impute_image
+from pyoniip import impute_image as impute_image_pyoniip
 from src.algorithm import impute_image_opencv
 from src.utils import load_image, plot_image_statistics, plot_processing_results, write_image
 
 
 def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, Path],
-         path_to_imputed_image: Union[str, Path], is_plot: bool) -> npt.NDArray[
-        np.uint16]:
-    imputed_image = impute_image(image=load_image(path_to_image),
-                                 calibration_image=load_image(path_to_calibration_image))
-    write_image(imputed_image, path_to_imputed_image)
+         path_to_imputed_image: Union[str, Path], is_plot: bool):
+    """
+    Imputes image using nearest-neighbour averaging and serializes the result to disk.
+    :param path_to_image: Union[str, Path]
+    :param path_to_calibration_image: Union[str, Path]
+    :param path_to_imputed_image: Union[str, Path]
+    :param is_plot: bool
+    """
+    imputed_image_pyoniip = impute_image_pyoniip(load_image(path_to_image),
+                                                 load_image(path_to_calibration_image))
+    imputed_image_python = impute_image(load_image(path_to_image),
+                                        load_image(path_to_calibration_image))
+    write_image(imputed_image_pyoniip, path_to_imputed_image)
+
     if is_plot:
         fig, ax = plot_image_statistics(image=load_image(path_to_image),
                                         calibration_image=load_image(path_to_calibration_image), )
@@ -25,14 +35,13 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
         fig, ax = plot_processing_results(
             image=load_image(path_to_image),
             calibration_image=load_image(path_to_calibration_image),
-            imputed_image=imputed_image,
+            imputed_image_python=imputed_image_python,
+            imputed_image_cpp=imputed_image_pyoniip,
             imputed_image_opencv=impute_image_opencv(image=load_image(path_to_image),
                                                      calibration_image=load_image(path_to_calibration_image))
         )
 
         plt.show()
-
-    return imputed_image
 
 
 if __name__ == '__main__':
@@ -49,6 +58,4 @@ if __name__ == '__main__':
                            type=str, required=False, default=False)
     args = my_parser.parse_args()
 
-    # print(args.input)
-    corrected_image = main(
-        args.image, args.calibration_image, args.output_image, args.plot)
+    main(args.image, args.calibration_image, args.output_image, args.plot)

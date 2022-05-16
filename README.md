@@ -45,7 +45,9 @@ The repository conforms to PEP8 guidelines. A [pre-commit](.pre-commit-config.ya
 
 ### Methodology
 
-Describe methodology here
+The main algorithm is written in C++ and binded to Python via `pybind11`. The module repo is [here](https://github.com/orphefs/pyoniip).
+
+TODO: Describe methodology here
 
 ![alt text](pyoniip_results.gif "Results on sample image and comparison with SOTA")
 
