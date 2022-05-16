@@ -37,9 +37,17 @@ source $ROOT_DIR/venv/bin/activate
 
 where variable `ROOT_DIR` contains the path to the project root folder.
 
+:warning: Do not directly modify `requirements.txt`. Please modify `unpinned_requirements.txt` instead and run `make update-requirements-txt`, followed by `make virtualenv` to update your local environment.
+
+### Coding style
+
+The repository conforms to PEP8 guidelines. A [pre-commit](.pre-commit-config.yaml) specification with the default `autopep8` configuration is used.
+
 ### Methodology
 
 Describe methodology here
+
+![alt text](pyoniip_results.gif "Results on sample image and comparison with SOTA")
 
 ## Usage
 
@@ -47,6 +55,6 @@ To run the computation pipeline, run the script `src/main.py` while in the virtu
 
 ## Tests
 
-To run tests, run `pytest` on the root directory. The command will collect all tests in the `test` directory.
+To run tests, [source the pip environment](#installation) and run `pytest` on the root directory. The command will collect all tests in the `test` directory.
 
 This repository also implements a test automation workflow on Github Actions.

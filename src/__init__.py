@@ -1,1 +1,1 @@
-from .main import impute_image
+from .algorithm import impute_image
