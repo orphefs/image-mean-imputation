@@ -3,4 +3,5 @@ pillow
 matplotlib
 pytest-lazy-fixture
 scipy
+pandas
 git+https://github.com/orphefs/pyoniip

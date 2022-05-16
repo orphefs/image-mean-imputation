@@ -8,14 +8,16 @@ matplotlib==3.5.2
 numpy==1.22.3
 opencv-python==4.5.5.64
 packaging==21.3
+pandas==1.4.2
 Pillow==9.1.0
 pluggy==1.0.0
 py==1.11.0
-pyoniip @ git+https://github.com/orphefs/pyoniip@7580bbe927b1f6ecb226e1531b3a9c7c29c82e56
+pyoniip @ git+https://github.com/orphefs/pyoniip@38452b0f4e5ec5fae43d3d51e4e3055ed29922ba
 pyparsing==3.0.9
 pytest==7.1.2
 pytest-lazy-fixture==0.6.3
 python-dateutil==2.8.2
+pytz==2022.1
 scipy==1.8.0
 six==1.16.0
 tomli==2.0.1
