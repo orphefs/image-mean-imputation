@@ -4,4 +4,5 @@ matplotlib
 pytest-lazy-fixture
 scipy
 pandas
+pre-commit
 git+https://github.com/orphefs/pyoniip

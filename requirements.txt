@@ -1,16 +1,23 @@
 # DO NOT EDIT! Automatically created by make update-requirements-txt
 attrs==21.4.0
+cfgv==3.3.1
 cycler==0.11.0
+distlib==0.3.4
+filelock==3.7.0
 fonttools==4.33.3
+identify==2.5.0
 iniconfig==1.1.1
 kiwisolver==1.4.2
 matplotlib==3.5.2
+nodeenv==1.6.0
 numpy==1.22.3
 opencv-python==4.5.5.64
 packaging==21.3
 pandas==1.4.2
 Pillow==9.1.0
+platformdirs==2.5.2
 pluggy==1.0.0
+pre-commit==2.19.0
 py==1.11.0
 pyoniip @ git+https://github.com/orphefs/pyoniip@38452b0f4e5ec5fae43d3d51e4e3055ed29922ba
 pyparsing==3.0.9
@@ -18,6 +25,9 @@ pytest==7.1.2
 pytest-lazy-fixture==0.6.3
 python-dateutil==2.8.2
 pytz==2022.1
+PyYAML==6.0
 scipy==1.8.0
 six==1.16.0
+toml==0.10.2
 tomli==2.0.1
+virtualenv==20.14.1
