@@ -70,7 +70,8 @@ def filter_outliers(df: pd.DataFrame) -> pd.DataFrame:
     Q3 = filtered["values"].quantile(0.75)
     IQR = Q3 - Q1
     # Filtering Values between Q1-1.5IQR and Q3+1.5IQR
-    filtered = filtered.query('(@Q1 - 1.5 * @IQR) <= {} <= (@Q3 + 1.5 * @IQR)'.format("values"))
+    filtered = filtered.query(
+        '(@Q1 - 1.5 * @IQR) <= {} <= (@Q3 + 1.5 * @IQR)'.format("values"))
     return filtered
 
 
@@ -111,15 +112,16 @@ def plot_image_statistics(image: np.typing.NDArray[np.uint16],
     pd.DataFrame({"values": image.flatten()}).plot.hist(bins=100, ax=ax[1, 0])
 
     ax[2, 0].set_title("Histogram after image normalization")
-    pd.DataFrame({"values": normalize_image(image, 65535).flatten()}).plot.hist(bins=100, ax=ax[2, 0])
-
-
+    pd.DataFrame({"values": normalize_image(image, 65535).flatten()}
+                 ).plot.hist(bins=100, ax=ax[2, 0])
 
     # calibration image
-    ax[1, 1].scatter(x=np.arange(len(calibration_image.flatten())), y=calibration_image.flatten())
+    ax[1, 1].scatter(x=np.arange(len(calibration_image.flatten())),
+                     y=calibration_image.flatten())
     ax[1, 1].set_title("Scatter plot")
 
-    filter_outliers(pd.DataFrame({"values": calibration_image.flatten()})).plot.hist(bins=100, ax=ax[2, 1])
+    filter_outliers(pd.DataFrame({"values": calibration_image.flatten()})).plot.hist(
+        bins=100, ax=ax[2, 1])
 
     return fig, ax
 
@@ -156,17 +158,17 @@ def plot_processing_results(image: np.typing.NDArray[np.uint16],
 
 
 def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, Path]) -> npt.NDArray[
-    np.uint16]:
+        np.uint16]:
     imputed_image = impute_image(image=load_image(path_to_image),
-        calibration_image=load_image(path_to_calibration_image))
-
+                                 calibration_image=load_image(path_to_calibration_image))
 
     fig, ax = plot_image_statistics(image=load_image(path_to_image),
-        calibration_image=load_image(path_to_calibration_image), )
+                                    calibration_image=load_image(path_to_calibration_image), )
 
     fig, ax = plot_processing_results(image=load_image(path_to_image),
-        calibration_image=load_image(path_to_calibration_image),
-        imputed_image=imputed_image)
+                                      calibration_image=load_image(
+                                          path_to_calibration_image),
+                                      imputed_image=imputed_image)
 
     plt.show()
 

@@ -109,7 +109,8 @@ def no_boundary_2_erroneous_pixels():
                       [1, 1, 1, 1, 1, 1, 1, 1, 1]], dtype=image_dtype)
 
     expected_corrected_image = np.array([[1., 1., 1., 1., 1., 1., 1., 1., 1.],
-                                         [1., 1., 2.875, 13., 4., 100., 1., 1., 1.],
+                                         [1., 1., 2.875, 13., 4.,
+                                             100., 1., 1., 1.],
                                          [1., 1., 3., 2., 5., 2., 1., 1., 1.],
                                          [1., 1., 6., 15., 9., 9., 1., 1., 1.],
                                          [1., 1., 5., 6., 7., 3.75, 1., 1., 1.],
@@ -158,7 +159,8 @@ tests = [
 
 @pytest.mark.parametrize("data", tests)
 def test_impute_image_python(data):
-    result = impute_image(image=data["image"], calibration_image=data["calibration_image"])
+    result = impute_image(
+        image=data["image"], calibration_image=data["calibration_image"])
     print(result)
     assert np.all(np.abs(result - data["expected_corrected_image"]) < 1e-8)
 
