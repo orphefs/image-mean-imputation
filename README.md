@@ -53,6 +53,21 @@ Describe methodology here
 
 To run the computation pipeline, run the script `src/main.py` while in the virtual environment.
 
+```bash
+usage: main.py [-h] [--image IMAGE] [--calibration_image CALIBRATION_IMAGE] [--output_image OUTPUT_IMAGE] [--plot PLOT]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --image IMAGE         Path to the uint16 image
+  --calibration_image CALIBRATION_IMAGE
+                        Path to the float calibration image
+  --output_image OUTPUT_IMAGE
+                        Path to the imputed image
+  --plot PLOT           Display diagnostic plots
+
+```
+Plotting is off by default.
+
 ## Tests
 
 To run tests, [source the pip environment](#installation) and run `pytest` on the root directory. The command will collect all tests in the `test` directory.
