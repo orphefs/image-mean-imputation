@@ -1,4 +1,9 @@
-# Image pixel-wise mean imputation 
+Image pixel-wise mean imputation 
+================================
+
+
+
+![tests workflow](https://github.com/orphefs/oni-image-processing-runner/actions/workflows/tests.yml/badge.svg)
 
 This project is about correcting microscope images by using a calibration mask. The main runner (image loading, plotting) and tests are written in Python, while the core algorithm is implemented in both Python and pybind11 in C++17. 
 
