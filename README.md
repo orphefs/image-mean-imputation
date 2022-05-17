@@ -44,7 +44,7 @@ git clone git@github.com:orphefs/oni-image-processing-runner.git
 
 ### Python environment
 
-The recommended Python version for this project is Python 3.8. To create a `venv` environment and install the
+The recommended Python version for this project is Python 3.8.10. To create a `venv` environment and install the
 dependencies, run
 
 ```bash
