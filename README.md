@@ -9,6 +9,19 @@ This project is about correcting microscope images by using a calibration mask. 
 loading, plotting) and tests are written in Python, while the core algorithm is implemented in both Python and
 pybind11 in C++17.
 
+## Quick summary
+
+To clone the repository, run the algorithm, tests, and produce plots, run the following in a bash shell:
+
+```bash
+git clone git@github.com:orphefs/oni-image-processing-runner.git
+cd oni-image-processing-runner
+make virtualenv
+source venv/bin/activate
+python -m pytest
+python -m src.main --plot True
+```
+
 ## Repository structure
 
 ```bash
@@ -22,6 +35,12 @@ pybind11 in C++17.
 ```
 
 ## Installation
+
+### Clone
+
+```bash
+git clone git@github.com:orphefs/oni-image-processing-runner.git
+```
 
 ### Python environment
 
@@ -76,29 +95,41 @@ The analysis and development was conducted on a machine running Ubuntu 20.04 wit
   order to **verify correctness**.
 - Python code was developed to solve all test cases.
 - C++ code was developed to optimize the main [algorithm](src/algorithm.py), and tested using the available
-  tests. Code was [packaged](https://github.com/orphefs/pyoniip) using `pybind11` and compiled using CMake and setuptools.
+  tests. Code was [packaged](https://github.com/orphefs/pyoniip) using `pybind11` and compiled using CMake and
+  setuptools.
 
->NOTE: The algorithm skips the boundaries and only corrects for non-edge pixels.
+> NOTE: The algorithm skips the boundaries and only corrects for non-edge pixels.
+
 #### Results and evaluation
+
 ##### Comparison with SOTA technique
 
-OpenCV's [cv.INPAINT_TELEA inpainting algorithm](https://docs.opencv.org/4.x/df/d3d/tutorial_py_inpainting.html) was used for comparison purposes. Even through this algorithm is more complicated as it uses the [Fast Marching method](http://www.olivier-augereau.com/docs/2004JGraphToolsTelea.pdf), which is a weighted, boundary-first method, it is a good reference basis for comparison. The `pyoniip` algorithm performs well, successfully imputing all erroneous pixels.
+OpenCV's [cv.INPAINT_TELEA inpainting algorithm](https://docs.opencv.org/4.x/df/d3d/tutorial_py_inpainting.html)
+was used for comparison purposes. Even through this algorithm is more complicated as it uses
+the [Fast Marching method](http://www.olivier-augereau.com/docs/2004JGraphToolsTelea.pdf), which is a
+weighted, boundary-first method, it is a good reference basis for comparison. The `pyoniip` algorithm performs
+well, successfully imputing all erroneous pixels.
 
 ![alt text](pyoniip_results.gif "Results on sample image and comparison with SOTA")
 
-For completeness, the `pyoniip` algorithm was compared with its Python counterpart, [benchmarked](src/benchmarking.py) using a sequence of randomly generated images of dimensions NxN. The C++ implementation clearly outperforms the Python implementation, as expected. The algorithm performs in O[N] time.
+For completeness, the `pyoniip` algorithm was compared with its Python
+counterpart, [benchmarked](src/benchmarking.py) using a sequence of randomly generated images of dimensions
+NxN. The C++ implementation clearly outperforms the Python implementation, as expected. The algorithm performs
+in O[N] time.
 
 ![alt text](comparison.png "Comparison between Python and C++ implementation")
 
-
 ## Usage
 
-To run the computation pipeline, run the script `src/main.py` while in the virtual environment. Plotting is off by default. To run with plotting on:
+To run the computation pipeline, run the script `src/main.py` while in the virtual environment. Plotting is
+off by default. To run with plotting on:
 
 ```bash
 python -m src.main --plot True
 ```
+
 Output of `python -m src.main --help`:
+
 ```bash
 usage: main.py [-h] [--image IMAGE] [--calibration_image CALIBRATION_IMAGE] [--output_image OUTPUT_IMAGE] [--plot PLOT]
 
@@ -112,8 +143,6 @@ optional arguments:
   --plot PLOT           Display diagnostic plots
 
 ```
-
-
 
 ## Tests
 
