@@ -19,7 +19,7 @@ platformdirs==2.5.2
 pluggy==1.0.0
 pre-commit==2.19.0
 py==1.11.0
-pyoniip @ git+https://github.com/orphefs/pyoniip@782dcd0b540efb6eb7097f76b41c384be23a0bbd
+pyoniip @ git+https://github.com/orphefs/pyoniip@66f6c606ce8f44e112aa077af5ba25257553a80d
 pyparsing==3.0.9
 pytest==7.1.2
 pytest-lazy-fixture==0.6.3
