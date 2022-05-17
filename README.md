@@ -14,7 +14,7 @@ pybind11 in C++17.
 To clone the repository, run the algorithm, tests, and produce plots, run the following in a bash shell:
 
 ```bash
-git clone git@github.com:orphefs/oni-image-processing-runner.git
+git clone https://github.com/orphefs/oni-image-processing-runner.git
 cd oni-image-processing-runner
 make virtualenv
 source venv/bin/activate

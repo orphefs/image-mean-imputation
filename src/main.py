@@ -1,16 +1,16 @@
+from src.utils import load_image, plot_diagnostics, write_image
+from src.algorithm import impute_image_opencv
+from pyoniip import impute_image as impute_image_pyoniip
+from src import impute_image
+import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import Union
 import numpy as np
 import numpy.typing as npt
 
 from definitions import DATA_DIR
-
-import matplotlib.pyplot as plt
-
-from src import impute_image
-from pyoniip import impute_image as impute_image_pyoniip
-from src.algorithm import impute_image_opencv
-from src.utils import load_image, plot_diagnostics, write_image
+import matplotlib
+matplotlib.use('TkAgg')
 
 
 def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, Path],

@@ -14,12 +14,12 @@ numpy==1.22.3
 opencv-python==4.5.5.64
 packaging==21.3
 pandas==1.4.2
-Pillow==9.1.0
+Pillow==9.1.1
 platformdirs==2.5.2
 pluggy==1.0.0
 pre-commit==2.19.0
 py==1.11.0
-pyoniip @ git+https://github.com/orphefs/pyoniip@38452b0f4e5ec5fae43d3d51e4e3055ed29922ba
+pyoniip @ git+https://github.com/orphefs/pyoniip@782dcd0b540efb6eb7097f76b41c384be23a0bbd
 pyparsing==3.0.9
 pytest==7.1.2
 pytest-lazy-fixture==0.6.3
@@ -28,6 +28,7 @@ pytz==2022.1
 PyYAML==6.0
 scipy==1.8.0
 six==1.16.0
+tk==0.1.0
 toml==0.10.2
 tomli==2.0.1
 virtualenv==20.14.1
