@@ -59,7 +59,7 @@ pip install git+https://github.com/orphefs/pyoniip
 
 The analysis and development was conducted on a machine running Ubuntu 20.04 with a 5.13.0-40-generic kernel.
 
-#### Stack:
+#### Stack
 
 - vscode (C++)
 - pycharm (Python)
@@ -67,7 +67,7 @@ The analysis and development was conducted on a machine running Ubuntu 20.04 wit
 - git
 - QGIS Desktop (image analysis)
 
-#### Steps:
+#### Steps
 
 - Image mimetypes were verified using `file` and TIF info obtained via `tiffinfo`. This step was conducted to
   verify image headers and bit depth.
@@ -77,14 +77,28 @@ The analysis and development was conducted on a machine running Ubuntu 20.04 wit
 - Python code was developed to solve all test cases.
 - C++ code was developed to optimize the main [algorithm](src/algorithm.py), and tested using the available
   tests. Code was [packaged](https://github.com/orphefs/pyoniip) using `pybind11` and compiled using CMake and setuptools.
--
+
+>NOTE: The algorithm skips the boundaries and only corrects for non-edge pixels.
+#### Results and evaluation
+##### Comparison with SOTA technique
+
+OpenCV's [cv.INPAINT_TELEA inpainting algorithm](https://docs.opencv.org/4.x/df/d3d/tutorial_py_inpainting.html) was used for comparison purposes. Even through this algorithm is more complicated as it uses the [Fast Marching method](http://www.olivier-augereau.com/docs/2004JGraphToolsTelea.pdf), which is a weighted, boundary-first method, it is a good reference basis for comparison. The `pyoniip` algorithm performs well, successfully imputing all erroneous pixels.
 
 ![alt text](pyoniip_results.gif "Results on sample image and comparison with SOTA")
 
+For completeness, the `pyoniip` algorithm was compared with its Python counterpart, [benchmarked](src/benchmarking.py) using a sequence of randomly generated images of dimensions NxN. The C++ implementation clearly outperforms the Python implementation, as expected. The algorithm performs in O[N] time.
+
+![alt text](comparison.png "Comparison between Python and C++ implementation")
+
+
 ## Usage
 
-To run the computation pipeline, run the script `src/main.py` while in the virtual environment.
+To run the computation pipeline, run the script `src/main.py` while in the virtual environment. Plotting is off by default. To run with plotting on:
 
+```bash
+python -m src.main --plot True
+```
+Output of `python -m src.main --help`:
 ```bash
 usage: main.py [-h] [--image IMAGE] [--calibration_image CALIBRATION_IMAGE] [--output_image OUTPUT_IMAGE] [--plot PLOT]
 
@@ -99,7 +113,7 @@ optional arguments:
 
 ```
 
-Plotting is off by default.
+
 
 ## Tests
 

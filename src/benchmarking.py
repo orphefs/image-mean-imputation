@@ -43,12 +43,11 @@ impute_image(image, calibration_image)'''.format(size)
     return min(times)
 
 
-if __name__ == "__main__":
-    # execution_time(size=100, module="src")
+def benchmark():
     pyoniip_execution_time = []
     python_execution_time = []
 
-    sizes = np.logspace(1.5, 3, 10)
+    sizes = np.logspace(1.5, 3, 15)
     for size in sizes:
         pyoniip_execution_time.append(
             execution_time(size=int(size), module="pyoniip"))
@@ -58,7 +57,12 @@ if __name__ == "__main__":
     plt.plot(sizes, python_execution_time)
     plt.plot(sizes, pyoniip_execution_time)
     plt.title("Python vs. C++ (20% erroneous pixels)")
+    plt.yscale('log')
     plt.xlabel("Image side (pixels)")
     plt.ylabel("Time (s)")
     plt.legend(["Python", "pyoniip"])
     plt.show()
+
+
+if __name__ == "__main__":
+    benchmark()
