@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from src import impute_image
 from pyoniip import impute_image as impute_image_pyoniip
 from src.algorithm import impute_image_opencv
-from src.utils import load_image, plot_image_statistics, plot_processing_results, write_image
+from src.utils import load_image, plot_diagnostics, write_image
 
 
 def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, Path],
@@ -22,23 +22,24 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
     :param path_to_imputed_image: Union[str, Path]
     :param is_plot: bool
     """
-    imputed_image_pyoniip = impute_image_pyoniip(load_image(path_to_image),
-                                                 load_image(path_to_calibration_image))
-    imputed_image_python = impute_image(load_image(path_to_image),
-                                        load_image(path_to_calibration_image))
+    imputed_image_pyoniip = impute_image_pyoniip(load_image(path_to_image).astype(np.uint16),
+                                                 load_image(path_to_calibration_image).astype(np.float32))
+    imputed_image_python = impute_image(load_image(path_to_image).astype(np.uint16),
+                                        load_image(path_to_calibration_image).astype(np.float32))
     write_image(imputed_image_pyoniip, path_to_imputed_image)
 
     if is_plot:
-        fig, ax = plot_image_statistics(image=load_image(path_to_image),
-                                        calibration_image=load_image(path_to_calibration_image), )
+        # fig, ax = plot_image_statistics(image=load_image(path_to_image).astype(np.uint16),
+        #                                 calibration_image=load_image(path_to_calibration_image).astype(np.float32), )
 
-        fig, ax = plot_processing_results(
-            image=load_image(path_to_image),
-            calibration_image=load_image(path_to_calibration_image),
-            imputed_image_python=imputed_image_python,
-            imputed_image_cpp=imputed_image_pyoniip,
-            imputed_image_opencv=impute_image_opencv(image=load_image(path_to_image),
-                                                     calibration_image=load_image(path_to_calibration_image))
+        fig, ax = plot_diagnostics(
+            image=load_image(path_to_image).astype(np.uint16),
+            calibration_image=load_image(
+                path_to_calibration_image).astype(np.float32),
+            imputed_image_python=imputed_image_python.astype(np.uint16),
+            imputed_image_cpp=imputed_image_pyoniip.astype(np.uint16),
+            imputed_image_opencv=impute_image_opencv(image=load_image(path_to_image).astype(np.uint16),
+                                                     calibration_image=load_image(path_to_calibration_image).astype(np.float32))
         )
 
         plt.show()

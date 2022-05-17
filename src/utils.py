@@ -1,11 +1,14 @@
+import copy
 from pathlib import Path
-from typing import Union, Any, Tuple
+from typing import Union, Any, Tuple, Dict
 
 import cv2
+import matplotlib
 import numpy as np
 import pandas as pd
 from PIL import Image
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, colors
+from matplotlib.ticker import FormatStrFormatter, LogFormatterSciNotation
 from numpy import typing as npt
 
 
@@ -26,92 +29,62 @@ def filter_outliers(df: pd.DataFrame) -> pd.DataFrame:
     return filtered
 
 
-def equalize_histogram(image: npt.NDArray[Any]) -> np.ndarray:
-    equ = cv2.equalizeHist(image)
-    res = np.hstack((image, equ))  # stacking images side-by-side
-
-    return res
+def draw_values(ax: plt.Axes, image: npt.NDArray[Any], indices: npt.NDArray[Any]):
+    for (i, j) in list(zip(*indices)):
+        ax.text(i, j, image[i, j], ha='center', va='center')
 
 
-def normalize_image(image: npt.NDArray[Any], max_val: int) -> npt.NDArray[Any]:
-    res = image.copy()
-    cv2.normalize(image, res, 0, max_val, cv2.NORM_MINMAX)
-    return res
+def plot_diagnostics(image: npt.NDArray[np.uint16],
+                     calibration_image: npt.NDArray[np.float32],
+                     imputed_image_python: npt.NDArray[np.uint16],
+                     imputed_image_cpp: npt.NDArray[np.uint16],
+                     imputed_image_opencv: npt.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
+    def get_colormap_kwargs(image: npt.NDArray, colormap: matplotlib.colors.Colormap) -> Dict:
 
+        return {"norm": colors.LogNorm(vmin=np.max([image.min(), 1]), vmax=image.max()), "cmap": colormap}
 
-def plot_image_statistics(image: np.typing.NDArray[np.uint16],
-                          calibration_image: np.typing.NDArray[np.float32]) -> Tuple[plt.figure, plt.axes]:
-    fig, ax = plt.subplots(nrows=3, ncols=2)
+    def get_hist_kwargs(image: npt.NDArray, hist_bins: int = 100) -> Dict:
 
-    # Image plots
-    # image
-    ax[0, 0].imshow(np.hstack([image, normalize_image(image, 65535)]))
-    ax[0, 0].set_title("Image and normalized version")
+        d = {"bins": np.logspace(start=np.log10(
+            np.max([image.min(), 1])), stop=np.log10(image.max()), num=hist_bins)}
+        return d
 
-    # calibration image
-    ax[0, 1].imshow(calibration_image)
-    ax[0, 1].set_title("Calibration image")
+    # init configuration
+    calibration_image[np.where(calibration_image >= 0.0)] = 255
+    calibration_image[np.where(calibration_image < 0.0)] = 0
+    difference = np.abs(image - imputed_image_cpp)
 
-    # Scatter and histogram plots
+    # init axes
+    fig, ax = plt.subplots(nrows=2, ncols=6)
+    ax[0, 0].get_shared_x_axes().join(*ax[0, :])
+    ax[0, 0].get_shared_y_axes().join(*ax[0, :])
+    ax[1, 0].get_shared_x_axes().join(*ax[1, :])
+    ax[1, 0].get_shared_y_axes().join(*ax[1, :])
 
-    # image
+    data = [image, calibration_image, imputed_image_python, imputed_image_cpp, imputed_image_opencv,
+            difference]
+    titles = ["Original image", "Calibration image", "Imputed image (python)", "Imputed image (pyoniip)",
+              "Imputed image (cv2.inpaint)", "abs[original - pyoniip]"]
+    colormaps = ["hsv", "hsv", "hsv", "hsv", "hsv", "hsv"]
+    # images
+    for index, (current_image, title, colormap) in enumerate(zip(data, titles, colormaps)):
+        ax[0, index].imshow(
+            current_image, **get_colormap_kwargs(current_image, colormap))
+        ax[0, index].set_title(title)
+        ax[0, index].axis('off')
 
-    # prob = stats.probplot(image.flatten(), dist=stats.norm, plot=ax[1, 0])
-    # ax[1, 0].set_title('Probability plot against normal distribution')
-    # pd.DataFrame({"values": normalize_image(image, 65535).flatten()}).plot.hist(bins=100, ax=ax[2, 0])
-    ax[1, 0].set_title("Histogram before image normalization")
-    pd.DataFrame({"values": image.flatten()}).plot.hist(bins=100, ax=ax[1, 0])
-
-    ax[2, 0].set_title("Histogram after image normalization")
-    pd.DataFrame({"values": normalize_image(image, 65535).flatten()}
-                 ).plot.hist(bins=100, ax=ax[2, 0])
-
-    # calibration image
-    ax[1, 1].scatter(x=np.arange(len(calibration_image.flatten())),
-                     y=calibration_image.flatten())
-    ax[1, 1].set_title("Scatter plot")
-
-    filter_outliers(pd.DataFrame({"values": calibration_image.flatten()})).plot.hist(
-        bins=100, ax=ax[2, 1])
-
-    return fig, ax
-
-
-def draw_values(ax: plt.Axes, image: npt.NDArray[Any], ):
-    for (j, i), label in np.ndenumerate(image):
-        ax.text(i, j, label, ha='center', va='center')
-
-
-def plot_processing_results(image: npt.NDArray[np.uint16],
-                            calibration_image: npt.NDArray[np.float32],
-                            imputed_image_python: npt.NDArray[np.uint16],
-                            imputed_image_cpp: npt.NDArray[np.uint16],
-                            imputed_image_opencv: npt.NDArray[np.uint16]) -> Tuple[plt.figure, plt.axes]:
-    fig, ax = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True)
-    # TODO: plot values of pixels on image
-    # normalize_image(image, 65535)
-    ax[0].imshow(normalize_image(image, 65535))
-    ax[0].set_title("Original image")
-    calibration_image[np.where(calibration_image < 0.0)] = 0.0
-    calibration_image[np.where(calibration_image > 0.0)] = 1.0
-    # draw_values(ax[0], normalize_image(image, 65535))
-
-    ax[1].imshow(calibration_image)
-    ax[1].set_title("Calibration image")
-    # draw_values(ax[1], calibration_image)
-
-    ax[2].imshow(normalize_image(imputed_image_python.astype("float"), 65535))
-    ax[2].set_title("Imputed image (python)")
-
-    ax[3].imshow(normalize_image(imputed_image_cpp.astype("float"), 65535))
-    ax[3].set_title("Imputed image (pyoniip)")
-
-    ax[4].imshow(normalize_image(imputed_image_opencv.astype("float"), 65535))
-    ax[4].set_title("Imputed image (cv2.inpaint)")
-    # draw_values(ax[2], normalize_image(imputed_image, 65535))
-    #
-    # cv2.imshow('image', imputed_image)
-    # cv2.waitKey(0)
+    # histograms
+    for index, current_image in enumerate(
+            [image, calibration_image, imputed_image_python, imputed_image_cpp, imputed_image_opencv,
+             difference]):
+        if index in [1, 5]:
+            ax[1, index].set_visible(False)
+        else:
+            ax[1, index].hist(current_image.flatten(), **
+                              get_hist_kwargs(current_image))
+            ax[1, index].set_title("Histogram")
+            ax[1, index].set_xscale("log")
+            ax[1, index].yaxis.set_major_formatter(LogFormatterSciNotation())
 
     return fig, ax
 
