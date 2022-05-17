@@ -10,6 +10,7 @@ import numpy.typing as npt
 
 from definitions import DATA_DIR
 import matplotlib
+
 matplotlib.use('TkAgg')
 
 
@@ -29,7 +30,6 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
     write_image(imputed_image_pyoniip, path_to_imputed_image)
 
     if is_plot:
-
         fig, ax = plot_diagnostics(
             image=load_image(path_to_image).astype(np.uint16),
             calibration_image=load_image(
@@ -37,7 +37,8 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
             imputed_image_python=imputed_image_python.astype(np.uint16),
             imputed_image_cpp=imputed_image_pyoniip.astype(np.uint16),
             imputed_image_opencv=impute_image_opencv(image=load_image(path_to_image).astype(np.uint16),
-                                                     calibration_image=load_image(path_to_calibration_image).astype(np.float32))
+                                                     calibration_image=load_image(path_to_calibration_image
+                                                                                  ).astype(np.float32))
         )
 
         plt.show()

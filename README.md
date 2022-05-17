@@ -144,6 +144,12 @@ optional arguments:
 
 ```
 
+For benchmarking, run:
+
+```
+python -m src.benchmarking
+```
+
 ## Tests
 
 To run tests, [source the pip environment](#installation) and run `pytest` on the root directory. The command

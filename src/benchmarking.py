@@ -1,10 +1,13 @@
 # importing the required modules
 import timeit
+from typing import Tuple
+
 import numpy as np
 import matplotlib.pyplot as plt
+import numpy.typing as npt
 
 
-def generate_data(size):
+def generate_data(size: int) -> Tuple[npt.NDArray[np.uint16], npt.NDArray[np.float32]]:
     percent = 0.2
     height = size
     width = size
@@ -19,7 +22,7 @@ def generate_data(size):
     return image, calibration_image
 
 
-def execution_time(size, module):
+def execution_time(size: int, module: str) -> float:
     SETUP_CODE = '''
 from __main__ import generate_data
 import numpy as np
