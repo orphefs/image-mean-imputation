@@ -29,8 +29,6 @@ def main(path_to_image: Union[str, Path], path_to_calibration_image: Union[str, 
     write_image(imputed_image_pyoniip, path_to_imputed_image)
 
     if is_plot:
-        # fig, ax = plot_image_statistics(image=load_image(path_to_image).astype(np.uint16),
-        #                                 calibration_image=load_image(path_to_calibration_image).astype(np.float32), )
 
         fig, ax = plot_diagnostics(
             image=load_image(path_to_image).astype(np.uint16),
