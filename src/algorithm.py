@@ -5,13 +5,9 @@ import cv2
 
 def impute_image(image: npt.NDArray[np.uint16], calibration_image: npt.NDArray[np.float32]):
     # divide and conquer strategy - check pixels between 1:end-1
-    for (i, j), calibration_value in np.ndenumerate(calibration_image):
-
-        # skip boundary in this loop
-
-        if i == 0 or j == 0 or i == calibration_image.shape[0] - 1 or j == calibration_image.shape[1] - 1:
-            pass
-        else:
+    for i in range(1, calibration_image.shape[0] - 1):
+        for j in range(1, calibration_image.shape[1] - 1):
+            calibration_value = calibration_image[i, j]
 
             # get neighbouring indices
             neighbouring_indices = [
