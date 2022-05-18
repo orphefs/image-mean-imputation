@@ -108,7 +108,8 @@ OpenCV's [cv.INPAINT_TELEA inpainting algorithm](https://docs.opencv.org/4.x/df/
 was used for comparison purposes. Even through this algorithm is more complicated as it uses
 the [Fast Marching method](http://www.olivier-augereau.com/docs/2004JGraphToolsTelea.pdf), which is a
 weighted, boundary-first method, it is a good reference basis for comparison. The `pyoniip` algorithm performs
-well, successfully imputing all erroneous pixels.
+well, successfully imputing all erroneous pixels. A better implementation would be a median filter as it would 
+perform better in the presence of noisy pixels.
 
 ![alt text](pyoniip_results.gif "Results on sample image and comparison with SOTA")
 
