@@ -3,7 +3,7 @@ Image pixel-wise mean imputation
 
 
 
-![tests workflow](https://github.com/orphefs/oni-image-processing-runner/actions/workflows/tests.yml/badge.svg)
+![tests workflow](https://github.com/orphefs/image-mean-imputation/actions/workflows/tests.yml/badge.svg)
 
 This project is about correcting microscope images by using a calibration mask. The main runner (image
 loading, plotting) and tests are written in Python, while the core algorithm is implemented in both Python and
@@ -14,8 +14,8 @@ pybind11 in C++17.
 To clone the repository, run the algorithm, tests, and produce plots, run the following in a bash shell:
 
 ```bash
-git clone https://github.com/orphefs/oni-image-processing-runner.git
-cd oni-image-processing-runner
+git clone https://github.com/orphefs/image-mean-imputation.git
+cd image-mean-imputation
 make virtualenv
 source venv/bin/activate
 python -m pytest
@@ -39,7 +39,7 @@ python -m src.main --plot True
 ### Clone
 
 ```bash
-git clone git@github.com:orphefs/oni-image-processing-runner.git
+git clone git@github.com:orphefs/image-mean-imputation.git
 ```
 
 ### Python environment
